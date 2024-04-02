@@ -5,19 +5,30 @@ Beatrice Borsari, Mor Frank, Eve S. Wattenberg, Susanna X. Liu, Xuezhu Yu, Mark 
 ***
 
 ## Requirements
-TK  
 
-## Installation
-Create a conda environment with python TK:
-
-    conda create -n chronODE python=TK
-Activate the environment:
-
-    conda activate chronODE
-Install chronODE and requirements:
-
-    I have no ide what should go here
+    pandas=2.2.1
+    
 
 ## Example running
-Run pipeline on open chromatin data from mouse forebrain:
-    TK
+Run pipeline on open chromatin data from mouse forebrain decreasing cCREs:  
+
+    python ODE_fitting_posvals.py \
+      --inputfile "example_dir/open_chromatin_example_input.tsv" \
+      --timepoints 105 \
+      --timecourse "mouse" \
+      --group "decreasing" \
+      --region "forebrain" \
+      --assay "open_chromatin" \
+      --valuesfile "example_dir/oc_vals.tsv" \
+      --derivsfile "example_dir/oc_derivs.tsv" \
+      --paramsfile "example_dir/oc_params.tsv"
+Run pipeline on DNase-seq data from human brain:  
+
+    python ODE_fitting_posvals.py \
+      --inputfile "example_dir/human_rnaseq.tsv" \
+      --timepoints 105 \
+      --timecourse "human" \
+      --assay "DNase" \
+      --valuesfile "example_dir/dnase_vals.tsv" \
+      --derivsfile "example_dir/dnase_derivs.tsv" \
+      --paramsfile "example_dir/dnase_params.tsv"
