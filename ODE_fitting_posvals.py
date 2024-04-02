@@ -1,6 +1,7 @@
 # Authors: Ke Xu and Eve Wattenberg
 # This version requires y > 0 and b > 0
 
+# Imports
 import pandas as pd
 from scipy import signal
 from scipy.interpolate import interp1d
@@ -13,12 +14,15 @@ import os
 import argparse
 print("imported")
 
+# Core ODE fitting function
 def subfit(vals, k_guess, b_guess, start, timepoints, positive):
+    # Choose initial parameter set
     if positive:
         parameter_guesses = np.array([k_guess, b_guess])
     else:
         parameter_guesses = np.array([-k_guess, b_guess])
 
+    # Define the ODE to fit
     def fitfunc(t, *params):
         def myode(x, t, parameters):
             k = parameters[0]
@@ -32,16 +36,13 @@ def subfit(vals, k_guess, b_guess, start, timepoints, positive):
     try:
         fit_param, kcov = curve_fit(fitfunc, timepoints, vals, p0=parameter_guesses, maxfev=5000)
     except Exception as e:
-        #return np.full(len(timepoints), np.nan), np.nan, np.nan, [np.nan, np.nan] [FLAGGING CHANGE]
         print("curve_fit threw an exception for this input series.\nFilling in nans")
         return np.full(len(timepoints), np.nan), np.nan, np.nan, [np.nan, np.nan] 
 
-    def system1order(y, t, k, b):
-        dydt = k * y * (1 - y/b)
-        return dydt
+    # def system1order(y, t, k, b):
+    #     dydt = k * y * (1 - y/b)
+    #     return dydt
 
-    # [FLAGGING CHANGE] old code defines "fit" here
-    
     # find the analytical solution of the initial guess:
     k_ODE = fit_param[0]
     b_ODE = fit_param[1]
@@ -65,53 +66,71 @@ def subfit(vals, k_guess, b_guess, start, timepoints, positive):
     else:
         return np.nan, np.nan, np.nan, [np.nan, np.nan]
 
-# [FLAGGING CHANGE] this function has been drastically altered
+# Wrapper function that tries fits with negative
+# and positive k and selects the best fit
 def ODE_fit_sign(vals, k_guess, b_guess, start, timepoints):
+    # negative initial k
     y_ODE_neg, MSE_ODE_neg, sign_func_neg, fit_param_neg = subfit(vals, k_guess, b_guess, start, timepoints, positive=False)
+    # positive initial k
     y_ODE_pos, MSE_ODE_pos, sign_func_pos, fit_param_pos = subfit(vals, k_guess, b_guess, start, timepoints, positive=True)
 
+    # pick the only successful fit
     if np.isnan(MSE_ODE_neg) and not np.isnan(MSE_ODE_pos):
         return fit_param_pos, y_ODE_pos, MSE_ODE_pos, sign_func_pos
     elif np.isnan(MSE_ODE_pos) and not np.isnan(MSE_ODE_neg):
         return fit_param_neg, y_ODE_neg, MSE_ODE_neg, sign_func_neg
+    # if both fits succeeded, select the one with lowest MSE 
     elif not np.isnan(MSE_ODE_pos) and not np.isnan(MSE_ODE_neg):
         if MSE_ODE_neg <= MSE_ODE_pos:
             return fit_param_neg, y_ODE_neg, MSE_ODE_neg, sign_func_neg
         else:
             return fit_param_pos, y_ODE_pos, MSE_ODE_pos, sign_func_pos
+    # if both fits failed, pass on nans
     else:
         return np.nan, np.nan, np.nan, np.nan
 
-# main fitting function
-def ODE_fit(df, num_timepoints, t_orig): # [FLAGGING CHANGE] added species flexibility
+# Main fitting function
+def ODE_fit(df, num_timepoints, t_orig): 
+    # Define the interpolated timecourse
     start = t_orig[0]
     end = t_orig[-1]
     timepoints = np.linspace(start, end, num_timepoints)
+
+    # Initial guesses for k and b
     k_guess = 0.9
     b_guess = 1.5
 
-    # Build a dataframe of interpolated values for each gene, also do the min_max normalization here
+    # Min-max normalization of input
     df_normalized = df.apply(lambda x: (x - x.min()) / (x.max() - x.min()), axis=1)
-    interp_vals = [interp1d(t_orig, row, bounds_error=False, fill_value='extrapolate')(timepoints) for row in df_normalized.values] # [FLAGGING CHANGE]
 
-    # [FLAGGING CHANGE] this whole section is new
+    # Interpolate input values to match timecourse
+    interp_vals = [interp1d(t_orig, row, bounds_error=False, fill_value='extrapolate')(timepoints) for row in df_normalized.values] 
+
+    # Perform fitting!
     results = []
     for vals in interp_vals: 
+        # Create a version of the input values that is guaranteed to be all positive
         move = np.max(abs(vals))
         vals_upward = vals + move
 
+        # Fit ODE to original and shifted input values
         outcome_org = ODE_fit_sign(vals, k_guess, b_guess, start, timepoints)
         outcome_up = ODE_fit_sign(vals_upward, k_guess, b_guess, start, timepoints)
 
+        # Select the best result of the two versions:
+
+        # pick the only successful fit
         if np.isnan(outcome_up[2]) and not np.isnan(outcome_org[2]):
             results.append((*outcome_org, 'original', 0))
         elif np.isnan(outcome_org[2]) and not np.isnan(outcome_up[2]):
             results.append((*outcome_up, 'upward', move))
+        # if both fits succeeded, select the one with lowest MSE
         elif not np.isnan(outcome_up[2]) and not np.isnan(outcome_org[2]):
-            if outcome_up[2] <= outcome_org[2]: # i sure hope this is mse
+            if outcome_up[2] <= outcome_org[2]: 
                 results.append((*outcome_up, 'upward', move))
             else:
                 results.append((*outcome_org, 'original', 0))
+        # if both fits failed, pass on nans
         else:
             results.append((np.nan, np.nan, np.nan, np.nan, 'NA', np.nan))
 
@@ -125,7 +144,7 @@ def ODE_fit(df, num_timepoints, t_orig): # [FLAGGING CHANGE] added species flexi
         'MOVE': [result[5] for result in results]
     }, index=df.index)
 
-    # Create fitted_vals DataFrame
+    # Create fitted values DataFrame
     fitted_vals = pd.DataFrame({
         tp: [r[1][i] if isinstance(r[1], np.ndarray) and not np.isnan(r[1][i]) else np.nan for r in results]
         for i, tp in enumerate(timepoints)
@@ -144,10 +163,12 @@ def ODE_fit(df, num_timepoints, t_orig): # [FLAGGING CHANGE] added species flexi
 
     return parameters, fitted_vals, fitted_derivs, timepoints
 
-# [FLAGGING CHANGE] This whole section is CLI-specific
+# Main body
 if __name__ == "__main__":
     print("starting")
     print("parsing")
+
+    # Parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--inputfile", type=str,
                     help="Input file with values at 8 timepoints")
@@ -172,11 +193,12 @@ if __name__ == "__main__":
                     help="Base folder")
     args = parser.parse_args()
 
+    # Sanity-check messages to ensure you have used the correct CLI options
     print(f"Loading {args.assay} data from {args.group} {args.region}, using file\n{args.inputfile}")
     print(f"Modeling values and derivatives for {args.timepoints} interpolated timepoints.")
     print(f"Values save to {args.valuesfile}\nDerivatives save to {args.derivsfile}\nODE parameters save to {args.paramsfile}")
 
-    # Load data
+    # Load raw data
     os.chdir(args.folder)
     raw_data = pd.read_csv(args.inputfile, sep = '\t', index_col=0)
 
@@ -208,6 +230,7 @@ if __name__ == "__main__":
     derivatives = derivatives.fillna("NA")
     parameters = parameters.fillna("NA")
 
+    # Save values, derivatives, and parameters
     values.to_csv(args.valuesfile, sep='\t')
     derivatives.to_csv(args.derivsfile, sep = '\t')
     parameters.to_csv(args.paramsfile, sep='\t')
