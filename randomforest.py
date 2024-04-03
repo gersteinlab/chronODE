@@ -1,5 +1,5 @@
-# Author: ESW
-# Random Forest regression; REFORMATTED after biorXiv submission
+# Author: Eve Wattenberg
+# Random Forest regression
 
 # Imports
 import numpy as np
@@ -63,3 +63,10 @@ predictions.to_csv(sys.argv[2], sep="\t")
 
 input_train.to_csv(sys.argv[3], sep="\t")
 rna_train.to_csv(sys.argv[4], sep="\t")
+
+if __name__ == "__main__":
+
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--inputfile", type=str,
+                    help="Input file with values at 8 timepoints")
