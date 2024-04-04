@@ -4,7 +4,7 @@ Beatrice Borsari, Mor Frank, Eve S. Wattenberg, Susanna X. Liu, Xuezhu Yu, Mark 
 
 An ODE-based  pipeline for interpolating values and derivatives from time-series data, and machine learning models that predicted gene expression from linked chromatin features.
 
-![test](https://github.com/gersteinlab/chronODE/blob/main/figure1.pdf)
+![](https://github.com/gersteinlab/chronODE/blob/main/figure1.png)
 
 ***
 
