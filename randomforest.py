@@ -16,11 +16,13 @@ parser.add_argument("-i", "--inputfile", type=str,
                 help="Input file with paired RNA and OC values")
 parser.add_argument("-p", "--predictfile", type=str,
                 help="File to write predictions to")  
-parser.add_argument("-t", "--timepoints", type=str, default=105
+parser.add_argument("-t", "--timepoints", type=str, default=105,
                 help="Number of time points in the data")  
-parser.add_argument("-m", "--modalities", type=str, default=1
+parser.add_argument("-m", "--modalities", type=str, default=1,
                 help="Number of input data modalities")  
-parser.add_argument("-s", "--randomseed", type=str, default=1941
+parser.add_argument("-s", "--split", type=str, default=0.2,
+                help="Fraction of input to use as test set")                
+parser.add_argument("-r", "--randomseed", type=str, default=1941,
                 help="Random seed")        
 args = parser.parse_args()
 
@@ -43,7 +45,7 @@ all_input = raw.iloc[:, 3:rna_start]
 all_input.index = raw.index
 
 # Split into training and train_test_split
-input_train, input_test, rna_train, rna_test = train_test_split(all_input, all_rna, test_size=0.2, random_state=42) # 30% data as test set
+input_train, input_test, rna_train, rna_test = train_test_split(all_input, all_rna, test_size=args.split, random_state=42) # 30% data as test set
 
 
 # Model!
