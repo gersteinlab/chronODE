@@ -12,22 +12,19 @@ option_list <- list (
                help = "Parameters file to use as input" ),
 
   make_option( c ("-v", "--valuesfile"),
-               help = "Parameters file to use as input" ),
+               help = "Values file to use as input" ),
 
   make_option( c ("-o", "--outfile"),
-               help = "Name of output file." )
+               help = "Name of output file." ),
 
-  make_option( c ("-s", "--start"),
+  make_option( c ("-s", "--start"), default = 10.5,
                help = "Start time (in days)" ),
 
-  make_option( c ("-e", "--end"),
+  make_option( c ("-e", "--end"), default = 21,
                help = "End time (in days)" ),
 
-  make_option( c ("-e", "--end"),
-               help = "End time (in days)" ),
-
-  make_option( c ("-g", "--group"),
-               help = "Pattern filter (increasing or decreasing)" ),
+  make_option( c ("-g", "--group"), default = "none",
+               help = "Pattern filter (increasing or decreasing)" )
 )
 
 
