@@ -144,5 +144,34 @@ EM10D0046746	-0.854076395760566	0.934316327285889	0.0117649087950832	1	original	
 ```
 
 ## Random Forest
+### Requirements
+### Input requirements
+`usage: randomforest.py [-h] [-i INPUTFILE] [-p PREDICTFILE] [-t TIMEPOINTS] [-m MODALITIES] [-s RANDOMSEED]`  
+Required arguments:
+```
+  -i INPUTFILE, --inputfile INPUTFILE
+                        Input file with paired RNA and chromatin feature values
+  -p PREDICTFILE, --predictfile PREDICTFILE
+                        File to write predictions to
+```
+Optional arguments:
+```
+  -h, --help            show help message and exit
 
+  -t TIMEPOINTS, --timepoints TIMEPOINTS
+                        Number of time points in the data; defaults to 105
+  -m MODALITIES, --modalities MODALITIES
+                        Number of input data modalities; defaults to 1
+  -s RANDOMSEED, --randomseed RANDOMSEED
+                        Random seed
+```
+### File formats
+The input file should be a tab-separated merge of the derivatives outputted by chronODE. Each row correspond to a linked gene-cCRE pair. The first two columns are expected to be indexes (i.e. the IDs of the gene-cCRE pairs). The next set of columns are the derivatives of chromatin accessibility (or other features) at each time point. The final set of columns are the derivatives of gene expression at each time point:
+```
+tk
+```
+The output file will look like chronODE output, but only gene-cCRE pairs from the test set will be written to the predictions file:
+```
+tk
+```
 ## Neural Net
