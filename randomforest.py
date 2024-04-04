@@ -44,17 +44,17 @@ all_rna.index = raw.index
 all_input = raw.iloc[:, 3:rna_start]
 all_input.index = raw.index
 
-# Split into training and train_test_split
+# Split into training and test sets
 input_train, input_test, rna_train, rna_test = train_test_split(all_input, all_rna, test_size=args.split, random_state=42) # 30% data as test set
 
 
 # Model!
 rf_model = RandomForestRegressor(n_estimators=100) # arbitrary number of trees
 
-# Train
+# Train the model
 rf_model.fit(input_train, rna_train)
 
-# Test
+# Test the model
 predictions = rf_model.predict(input_test)
 
 # Compute errors
