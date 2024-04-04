@@ -97,7 +97,33 @@ Run pipeline on DNase-seq data from human brain decreasing cCREs:
 
 ```Libraries should go here?```
 ### Input requirements
+`Usage: switching.time.labels.R [options]`  
+Required arguments:
+```
+        -p PARAMSFILE, --paramsfile=PARAMSFILE
+                Parameters file to use as input
 
+        -v VALUESFILE, --valuesfile=VALUESFILE
+                Values file to use as input
+
+        -o OUTFILE, --outfile=OUTFILE
+                Name of output file.
+```
+Optional arguments:
+```
+
+        -s START, --start=START
+                Start time (in days), defaults to 10.5
+
+        -e END, --end=END
+                End time (in days), defaults to 21
+
+        -g GROUP, --group=GROUP
+                Pattern filter (increasing or decreasing), defaults to none
+
+        -h, --help
+                Show help message and exit
+```
 ### File formats
 The input files should be the output values and parameters from a single chronODE run:
 ```
