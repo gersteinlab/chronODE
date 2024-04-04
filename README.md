@@ -12,12 +12,13 @@ A figure should go here!
 ### Requirements
 
 ```Libraries should go here?```
-### Input data and files format
+### Input requirements
 
-```
-Usage: ODE_fitting_posvals.py [-h] [-i INPUTFILE] [-t TIMEPOINTS] [-T TIMECOURSE] [-g GROUP] [-r REGION] [-a ASSAY] [-v VALUESFILE] [-d DERIVSFILE]
-                              [-p PARAMSFILE] [-f FOLDER]
+Usage: `ODE_fitting_posvals.py [-h] [-i INPUTFILE] [-t TIMEPOINTS] [-T TIMECOURSE] [-g GROUP] [-r REGION] [-a ASSAY] [-v VALUESFILE] [-d DERIVSFILE]
+                              [-p PARAMSFILE] [-f FOLDER]`
+                                
 Required arguments:
+```
   -i INPUTFILE, --inputfile INPUTFILE
                         Input file with values at a handful of timepoints
   -v VALUESFILE, --valuesfile VALUESFILE
@@ -28,7 +29,9 @@ Required arguments:
                         Parameters output file
   -f FOLDER, --folder FOLDER
                         Base filepath for file names
-optional arguments:
+```
+Optional arguments:
+```
   -h, --help            show this help message and exit
 
   -t TIMEPOINTS, --timepoints TIMEPOINTS
@@ -43,6 +46,8 @@ optional arguments:
                         Assay suffix to put on column names; defaults to 'x'
 
 ```
+### File formats
+
 
 ### Examples
 Run pipeline on RNAseq data from mouse forebrain:  
@@ -67,3 +72,9 @@ Run pipeline on DNase-seq data from human brain decreasing cCREs:
       --valuesfile "example_dir/dnase_vals.tsv" \
       --derivsfile "example_dir/dnase_derivs.tsv" \
       --paramsfile "example_dir/dnase_params.tsv"
+
+## Switching time classifier
+
+## Random Forest
+
+## Neural Net
