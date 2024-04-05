@@ -9,7 +9,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--inputfile", type=str,
@@ -45,12 +44,12 @@ all_input = raw.iloc[:, 3:rna_start]
 all_input.index = raw.index
 
 # Split into training and test sets
-input_train, input_test, rna_train, rna_test = train_test_split(all_input, all_rna, test_size=args.split, random_state=42) # 30% data as test set
+input_train, input_test, rna_train, rna_test = train_test_split(all_input, all_rna, test_size=args.split, random_state=42)
+
 
 
 # Model!
 rf_model = RandomForestRegressor(n_estimators=100) # arbitrary number of trees
-
 # Train the model
 rf_model.fit(input_train, rna_train)
 
@@ -61,6 +60,7 @@ predictions = rf_model.predict(input_test)
 mae = mean_absolute_error(rna_test, predictions)
 mse = mean_squared_error(rna_test, predictions)
 r2 = r2_score(rna_test, predictions)
+
 print("Mean Absolute Error:", mae)
 print("Mean Squared Error:", mse)
 print("R^2 Score:", r2)
@@ -69,6 +69,4 @@ print("R^2 Score:", r2)
 predictions = pd.DataFrame(predictions)
 predictions.index = rna_test.index
 predictions.to_csv(args.predictfile, sep="\t")
-
-
 
