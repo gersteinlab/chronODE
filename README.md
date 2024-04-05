@@ -10,9 +10,14 @@ An ODE-based  pipeline for interpolating values and derivatives from time-series
 
 ## *chronODE*
 
-### Requirements
+### Dependencies
 
-```Libraries should go here?```
+```
+argparse
+numpy
+pandas
+scipy
+```
 ### Input requirements
 
 Usage: `ODE_fitting_posvals.py [-h] [-i INPUTFILE] [-t TIMEPOINTS] [-T TIMECOURSE] [-g GROUP] [-r REGION] [-a ASSAY] [-v VALUESFILE] [-d DERIVSFILE]
@@ -93,9 +98,10 @@ Run pipeline on DNase-seq data from human brain decreasing cCREs:
 
 ## Switching time classifier
 
-### Requirements
-
-```Libraries should go here?```
+### Dependencies
+```
+optparse
+```
 ### Input requirements
 `Usage: switching.time.labels.R [options]`  
 Required arguments:
@@ -144,7 +150,12 @@ EM10D0046746	-0.854076395760566	0.934316327285889	0.0117649087950832	1	original	
 ```
 
 ## Random Forest
-### Requirements
+### Dependencies
+```
+numpy
+pandas
+sklearn
+```
 ### Input requirements
 `usage: randomforest.py [-h] [-i INPUTFILE] [-p PREDICTFILE] [-t TIMEPOINTS] [-m MODALITIES] [-s RANDOMSEED]`  
 Required arguments:
