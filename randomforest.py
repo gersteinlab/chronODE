@@ -68,7 +68,7 @@ print("R^2 Score:", r2)
 # Save predictions
 predictions = pd.DataFrame(predictions)
 predictions.index = rna_test.index
-predictions.to_csv(sys.argv[2], sep="\t")
+predictions.to_csv(args.predictfile, sep="\t")
 
 
 
