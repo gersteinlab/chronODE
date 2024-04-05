@@ -4,50 +4,59 @@
 # Imports
 import numpy as np
 import pandas as pd
-import sys
+import argparse
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-# Dear Past Eve: WHAT IS GOING ON WITH THE CLI INPUTS!!!
+# Parse command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--inputfile", type=str,
+                help="Input file with paired RNA and OC values")
+parser.add_argument("-p", "--predictfile", type=str,
+                help="File to write predictions to")  
+parser.add_argument("-t", "--timepoints", type=str, default=105,
+                help="Number of time points in the data")  
+parser.add_argument("-m", "--modalities", type=str, default=1,
+                help="Number of input data modalities")  
+parser.add_argument("-s", "--split", type=str, default=0.2,
+                help="Fraction of input to use as test set")                
+parser.add_argument("-r", "--randomseed", type=str, default=1941,
+                help="Random seed")        
+args = parser.parse_args()
 
-np.random.seed(1941)
+# Set random seed
+np.random.seed(args.randomseed)
+
 # Read in input/output file.
-raw = pd.read_csv(sys.argv[1], sep="\t")
+raw = pd.read_csv(args.inputfile, sep="\t")
 raw['combined_index'] = raw.apply(lambda row: f"{row['gene_id']}-{row['region']}-{row['cCRE_id']}", axis=1)
 raw.index = raw["combined_index"]
+
 # Select RNA cols
-all_rna = raw.iloc[:, 108:213]
+rna_start = (args.timepoints * args.modalities) + 3
+rna_end = rna_start + args.timepoints
+all_rna = raw.iloc[:, rna_start:rna_end]
 all_rna.index = raw.index
-print("All rna shape: ", all_rna.shape)
-print(all_rna.head)
 
-# Select input cols: oc, k27ac, and CORRELATION   
-# all_input = raw.drop(columns=['ccre_id', 'gene_id', 'cCRE_id'])
-# all_input = pd.DataFrame(all_input.filter(regex='^(?!.*rna).*$').values)
-all_input = raw.iloc[:, 3:108]
+# Select input cols
+all_input = raw.iloc[:, 3:rna_start]
 all_input.index = raw.index
-#all_input = all_input.drop([0, 1], axis=1)
-print("All input shape: ", all_input.shape)
-print(all_input.head)
 
-# Split into training and train_test_split
-input_train, input_test, rna_train, rna_test = train_test_split(all_input, all_rna, test_size=0.2, random_state=42) # 30% data as test set
+# Split into training and test sets
+input_train, input_test, rna_train, rna_test = train_test_split(all_input, all_rna, test_size=args.split, random_state=42)
+
 
 
 # Model!
 rf_model = RandomForestRegressor(n_estimators=100) # arbitrary number of trees
-
-# Train
+# Train the model
 rf_model.fit(input_train, rna_train)
-print("Training shape: ", rna_train.shape)
-print(rna_train.head)
 
-# Test
+# Test the model
 predictions = rf_model.predict(input_test)
-print("Predictions shape:", predictions.shape)
-print(predictions[:2])
 
+# Compute errors
 mae = mean_absolute_error(rna_test, predictions)
 mse = mean_squared_error(rna_test, predictions)
 r2 = r2_score(rna_test, predictions)
@@ -59,14 +68,5 @@ print("R^2 Score:", r2)
 # Save predictions
 predictions = pd.DataFrame(predictions)
 predictions.index = rna_test.index
-predictions.to_csv(sys.argv[2], sep="\t")
+predictions.to_csv(args.predictfile, sep="\t")
 
-input_train.to_csv(sys.argv[3], sep="\t")
-rna_train.to_csv(sys.argv[4], sep="\t")
-
-if __name__ == "__main__":
-
-    # Parse command-line arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--inputfile", type=str,
-                    help="Input file with values at 8 timepoints")
