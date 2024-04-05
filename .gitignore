@@ -3,3 +3,4 @@ test_april2.out
 test_april4.out
 env_test.sh
 test.switch.sh
+rftest.sh
