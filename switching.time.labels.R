@@ -1,4 +1,5 @@
-
+# A script for classifying curved fitted by chronODE 
+# as accelerators, decelerators, or switchers
 
 #*****************
 # OPTION PARSING *
@@ -27,7 +28,6 @@ option_list <- list (
                help = "Pattern filter (increasing or decreasing)" )
 )
 
-
 parser <- OptionParser(
   usage = "%prog [options] file", 
   option_list=option_list
@@ -41,15 +41,14 @@ opt <- arguments$options
 # BEGIN *
 #********
 
-# 1. read dataframe with set of 
-# cCREs classified based on concave/convex approach by Ke
+# read dataframe of cCREs' fitted parameters
 m <- read.csv(opt$paramsfile, sep="\t")
 
-# 3. read actual values reconstructed
+# read actual values reconstructed
 # by the ODE pipeline
 values <- read.csv(opt$valuesfile, sep="\t")
 
-# 4. prepare vectors to store
+# prepare vectors to store
 # values of Ce^(kt) at start and end times,
 # and the switching and saturation times
 cekt_start <- c()
@@ -58,8 +57,8 @@ switching_time <- c()
 saturation_time <- c()
 minimum_time <- c()
 
-# 5. Compute, for every cCRE, Ce^(kt) at start and end times
-# and the switching and saturation times
+# Compute, for every cCRE, Ce^(kt) at start and end times
+# and the switching, minimum, and saturation times
 
 for (i in 1:nrow(m)) {
   
@@ -126,12 +125,13 @@ for (i in 1:nrow(sub.m)) {
 
 sub.m$label <- label
 
-# 8. save output matrix
+# drop unnecessary columns
 sub.m$cekt_start <- NULL
 sub.m$cekt_end <- NULL
 sub.m$ratio_start <- NULL
 sub.m$ratio_end <- NULL
 
+# Write output table!
 write.table(sub.m, file = opt$outfile,
             sep = '\t', quote = F, row.names = F, col.names = T)
 
