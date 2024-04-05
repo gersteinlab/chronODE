@@ -93,6 +93,13 @@ Run pipeline on DNase-seq data from human brain decreasing cCREs:
 
 ## Switching time classifier
 
+Output is in the same format as input, but with columns added:
+```
+cCRE_id	k	b	MSE	sign_func	TYPE	MOVE	group	region	switching_time	saturation_time	minimum_time	label
+EM10D0043278	-0.0533826754945263	124805.313024191	0.027756992734058	1	upward	0.996269378526066	decreasing	forebrain	-200.109828054027	-286.188688050577	490.027208851933	decelerator
+EM10D0046746	-0.854076395760566	0.934316327285889	0.0117649087950832	1	original	0	decreasing	forebrain	14.6963669566587	9.31614585121227	57.8322757240436	switcher
+EM10D0071994	-0.0873006586568059	7.24757951056798	0.00331911269087488	1	upward	1	decreasing	forebrain	-0.549392512781548	-53.1849616005111	421.456146216709	decelerator
+```
 ## Random Forest
 
 ## Neural Net

@@ -127,6 +127,11 @@ for (i in 1:nrow(sub.m)) {
 sub.m$label <- label
 
 # 8. save output matrix
+sub.m$cekt_start <- NULL
+sub.m$cekt_end <- NULL
+sub.m$ratio_start <- NULL
+sub.m$ratio_end <- NULL
+
 write.table(sub.m, file = opt$outfile,
             sep = '\t', quote = F, row.names = F, col.names = T)
 
