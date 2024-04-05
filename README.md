@@ -54,7 +54,7 @@ cCRE_id	        E10.5	                E11.5	                E12.5	              
 EM10D0043278	0.112209163706003	0.263615771996068	0.101058746899128	0.00109066358305005	-0.0733457337036519	-0.155362226485118	-0.130227596077729	-0.103008112890712
 EM10D0046746	0.158520542990051	0.207235934578883	0.0882546996858981	0.0342933724159356	-0.0391589358988853	-0.136999257336671	-0.328550015608365	-0.181150203360637
 ```
-The parameters output will be tab-separated and have a row for each element and have columns for the k and b parameters, mean squared error (MSE), ????, the vertical move applied to the data, user-specified group, and user-specified region:  
+The parameters output will be tab-separated and have a row for each element and have columns for the k and b parameters, mean squared error (MSE), fuction sign, the vertical move applied to the data, user-specified group, and user-specified region:  
 ```
 cCRE_id	        k	                    b	                  MSE	            sign_func	TYPE	    MOVE	              group	  region
 EM10D0043278	-0.053382675494526265	124805.313024191	 0.02775699273405798	  1.0	upward	  0.9962693785260658	downreg	forebrain
@@ -138,9 +138,9 @@ EM10D0046746	-0.8540763957605665	  0.9343163272858892	0.011764908795083247	1.0	o
 ```
 The output file is identical to the parameters input, but with columns added:
 ```
-cCRE_id	k	b	MSE	sign_func	TYPE	MOVE	group	region	cekt_start	cekt_end	ratio_start	ratio_end	switching_time	saturation_time	minimum_time	label
-EM10D0043278	-0.0533826754945263	124805.313024191	0.027756992734058	1	upward	0.996269378526066	decreasing	forebrain	1.63492053276479	0.933397715159376	1.30997670944337e-05	7.47882996758685e-06	-200.109828054027	-286.188688050577	490.027208851933	decelerator
-EM10D0046746	-0.854076395760566	0.934316327285889	0.0117649087950832	1	original	0	decreasing	forebrain	33.652176943635	0.00428890249360284	36.017969461576	0.00459041800763746	14.6963669566587	9.31614585121227	57.8322757240436	switcher
+cCRE_id	k	b	MSE	sign_func	TYPE	MOVE	group	region	switching_time	saturation_time	minimum_time	label
+EM10D0043278	-0.0533826754945263	124805.313024191	0.027756992734058	1	upward	0.996269378526066	decreasing	forebrain	-200.109828054027	-286.188688050577	490.027208851933	decelerator
+EM10D0046746	-0.854076395760566	0.934316327285889	0.0117649087950832	1	original	0	decreasing	forebrain	14.6963669566587	9.31614585121227	57.8322757240436	switcher
 ```
 
 ## Random Forest
