@@ -9,3 +9,5 @@ env_test.sh
 example_data/rf_pred.tsv
 test_march21.out
 
+*test*
+*.out
