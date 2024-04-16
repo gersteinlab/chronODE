@@ -204,5 +204,5 @@ python randomforest.py \
   -s 42
  ```
 
-## Neural Net
+## Neural Network
 Coming soon!
