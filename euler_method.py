@@ -53,27 +53,27 @@ initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
 
 ### run euler for the NN
 
-# TODO paameterize
-rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
-real_values_geneid = geneid
-index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
-initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
-
-all_y_pred = all_pred_y[index_gene].tolist()[0] 
-all_y_pred = [i[0]for i in all_y_pred]
-constructed_line = run_euler(initial_real_value_gene, all_y_pred)
-
-# ## run euler for the RF
-
+# # TODO parameterize
 # rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
 # real_values_geneid = geneid
 # index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
 # initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
 
-# RF_pred_data = pd.read_csv('rf_predictions_samples.tsv', sep = '\t')
-# #RF_pred = RF_pred_data.iloc[4,1:-1].tolist()  ### put the row number
-# RF_pred = RF_pred_data[RF_pred_data['gene_id'] == geneid].iloc[0,1:-1].values.tolist()
-# constructed_line = run_euler(initial_real_value_gene, RF_pred)
+# all_y_pred = all_pred_y[index_gene].tolist()[0] 
+# all_y_pred = [i[0]for i in all_y_pred]
+# constructed_line = run_euler(initial_real_value_gene, all_y_pred)
+
+# ## run euler for the RF
+print("big money no whammies")
+rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
+real_values_geneid = geneid
+index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
+initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
+
+RF_pred_data = pd.read_csv('rf_predictions_samples.tsv', sep = '\t')
+#RF_pred = RF_pred_data.iloc[4,1:-1].tolist()  ### put the row number
+RF_pred = RF_pred_data[RF_pred_data['gene_id'] == geneid].iloc[0,1:-1].values.tolist()
+constructed_line = run_euler(initial_real_value_gene, RF_pred)
 
 
 ## plot euler
