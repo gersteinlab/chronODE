@@ -34,7 +34,8 @@ data.drop_duplicates(inplace=True, keep='first', ignore_index = True)
 # negatively correalated 
 
 print("which model do you want to run? for positively correlated OC-RNA type pos for negatively correlated type neg")
-user_input = input()
+#user_input = input()
+user_input = "pos" # for debugging
 
 print(f'user choice is {user_input}')
 
@@ -110,7 +111,7 @@ def tensorxy(X_data_OC_derivatives, y_data_rna_derivatives):
 
 ## Define X (Features) and y (target) as tensors
 X1,y1 = tensorxy(X_data_OC_derivatives,y_data_rna_derivatives)
-
+print("needles and pins")
 
 ### NN model
 
@@ -313,16 +314,20 @@ with torch.no_grad():
         print(f'Loss: {loss.mean().item():.4f}')
         test_losses.append(loss.mean().item())
 
+print("All done!")
+
+
+
 # there were a huge number of plots here
 
-def find_indices(list_to_check, item_to_find):
-    "input: list_to_check: list if genes / cCREs ID"
-    "Output: item_to_find: gene / cCRE ID that its index needs to be found in list_to_check"
-    indices = []
-    for idx, value in enumerate(list_to_check):
-        if value == item_to_find:
-            indices.append(idx)
-    return indices
+# def find_indices(list_to_check, item_to_find):
+#     "input: list_to_check: list if genes / cCREs ID"
+#     "Output: item_to_find: gene / cCRE ID that its index needs to be found in list_to_check"
+#     indices = []
+#     for idx, value in enumerate(list_to_check):
+#         if value == item_to_find:
+#             indices.append(idx)
+#     return indices
 
 # # plot time series data of a specific cCRE along with its associated gene ID
 
