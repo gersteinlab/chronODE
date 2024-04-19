@@ -15,8 +15,26 @@ from sklearn.model_selection import train_test_split
 import matplotlib
 import scipy.stats as sc
 import math
+import argparse
 
-print("so it begins")
+# Parse command-line arguments
+# parser = argparse.ArgumentParser()
+# parser.add_argument("-i", "--inputfile", type=str,
+#                 help="Input file with paired RNA and OC values")
+# parser.add_argument("-p", "--predictfile", type=str,
+#                 help="File to write predictions to")  
+# parser.add_argument("-t", "--timepoints", type=str, default=105,
+#                 help="Number of time points in the data")
+# parser.add_argument("-n", "--neuralnetfile", type=str, default=None
+#                 help="Filepath to save model, if used must end in .pth")                  
+# parser.add_argument("-m", "--modalities", type=str, default=1,
+#                 help="Number of input data modalities")  
+# parser.add_argument("-s", "--split", type=str, default=0.2,
+#                 help="Fraction of input to use as test set")                
+# parser.add_argument("-r", "--randomseed", type=str, default=1941,
+#                 help="Random seed")        
+# args = parser.parse_args()
+
 ### Get data: Open chromatin signals and rna expression derivatives over time
 
 # Read the databases of downregulated (decreasing) cCREs and upregulated (increasing) cCREs
@@ -314,8 +332,15 @@ with torch.no_grad():
         print(f'Loss: {loss.mean().item():.4f}')
         test_losses.append(loss.mean().item())
 
-print("All done!")
+print("All done! Saving!")
 
+## save model ###  ## to save a Pytorch model use:
+torch.save(model, 'model_name.pth')
+
+# save predictions
+
+all_pred_y = pd.DataFrame(all_pred_y)
+all_pred_y.to_csv("testpreds.tsv", sep="\t")
 
 
 # there were a huge number of plots here
