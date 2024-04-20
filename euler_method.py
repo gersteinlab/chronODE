@@ -2,7 +2,8 @@
 
 # Imports
 import pandas as pd
-print("i am running")
+import numpy as np
+print("frog on the floor")
 
 def euler(t_prev,y_prev, deriv_prev,t_next):
     "apply the Euler method"
@@ -23,6 +24,7 @@ def run_euler(initial_point, all_y_pred):
     constructed_line = []
     y=initial_point  ## initial point is the real point
     y0=[initial_point]
+    print(len(all_y_pred))
 
     for i in range(0,105):
       
@@ -41,8 +43,7 @@ def run_euler(initial_point, all_y_pred):
 
 # get parameters to run the Euler method
 
-print("like a good little script")
-geneid = "ENSMUSG00000015942"
+geneid = "ENSMUSG00000015942" #TODO oh NO what IS this
 #cCRE id EM10D1960585
 
 # TODO parameterize
@@ -64,15 +65,22 @@ initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
 # constructed_line = run_euler(initial_real_value_gene, all_y_pred)
 
 # ## run euler for the RF
-print("big money no whammies")
+
 rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
 real_values_geneid = geneid
 index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
 initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
 
-RF_pred_data = pd.read_csv('rf_predictions_samples.tsv', sep = '\t')
+RF_pred_data = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/models/RF/predictions/negcorr_pred_jan11.tsv', sep = '\t')
 #RF_pred = RF_pred_data.iloc[4,1:-1].tolist()  ### put the row number
-RF_pred = RF_pred_data[RF_pred_data['gene_id'] == geneid].iloc[0,1:-1].values.tolist()
+RF_pred_data['gene_id'] = RF_pred_data['combined_index'].str.split('-', expand=True)[0] #TODO parameterize this as optional???
+RF_pred_data.drop('combined_index', axis=1, inplace=True)
+
+RF_pred = RF_pred_data.iloc[0,0:-1].values.tolist() # TODO this is NOT the right value
+
+print(RF_pred_data.columns)
+print("bar")
+print(RF_pred)
 constructed_line = run_euler(initial_real_value_gene, RF_pred)
 
 
@@ -85,8 +93,8 @@ real_values_geneid = geneid
 index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
 real_values_gene =  rna_actual_pipe.iloc[index_geneid,1:]
 
-print('cCRE id', ccreid)
-print('gene id', real_values_geneid, '\n')
+#print('cCRE id', ccreid)
+#print('gene id', real_values_geneid, '\n')
 print('true values', real_values_gene.tolist(), '\n')
 print('reconstructed values', constructed_line[0:105], '\n')
 
@@ -101,38 +109,4 @@ print('reconstructed values', constructed_line[0:105], '\n')
 # plt.xticks(fontsize=18)
 # plt.yticks(fontsize=18)
 
-
-### NN performance: Pearson's r an MAE (mean absolute error)
-
-## plot true-predicted correlation histogram
-
-corr_list = []
-true_list = []
-pred_list = []
-
-for i in range(0, len(all_true_y)):
-    true_list.append([i[0] for i in all_true_y[i][0].tolist()])
-    pred_list.append([i[0] for i in all_pred_y[i][0].tolist()])
-
-for i in range(0, len(pred_list)):
-    r,p = sc.pearsonr(pred_list[i], true_list[i])
-    corr_list.append(r)
-
-corr_list = [0 if math.isnan(x) else x for x in corr_list]
-# plt.figure(figsize=(5,5))
-# plt.hist(corr_list, histtype = 'stepfilled', color='royalblue')
-# plt.xticks(fontsize=18)
-# plt.xlabel('true - predicted dg/dt \n correlation', fontsize=18)
-# plt.yticks(fontsize=18)
-# plt.ylabel('counts', fontsize=18)
-# plt.ylim(0,350)
-# #plt.xlim(-0.1,1)
-# plt.xticks([-1,-0.5, 0, 0.5, 1])
-# #plt.yticks([0, 100])
-print(np.nanpercentile(corr_list, 75))
-print(np.nanpercentile(corr_list, 50))
-print(np.nanpercentile(corr_list, 25)) 
-
-print(np.mean(corr_list))
-print(np.std(corr_list))
-print('positive corr', len([i for i in corr_list if i>0])/len(corr_list))
+print("Goodbye!")
