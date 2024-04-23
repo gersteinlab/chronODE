@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 import argparse
 import sys
-print("hoo boy")
 
 def euler(t_prev,y_prev, deriv_prev,t_next):
     "apply the Euler method"
@@ -59,9 +58,7 @@ parser.add_argument("-g", "--geneid", type=str, default="",
 args = parser.parse_args()
 
 print(args.mode)
-if args.mode != "gene":
-    print("Only single-gene mode currently supported")
-elif args.gene == "":
+if args.mode == "gene" and args.geneid == "":
     print("Please specify an ENSEMBL ID to use single-gene mode. Exiting.")
     sys.exit()
 
@@ -112,7 +109,13 @@ if args.mode == "all":
     print(reconstructions)
     print("Ciao!")
 
-
+# Save results
+if args.mode == "all":
+    reconstructions.to_csv(args.outfile, sep="\t", index=False)
+else:
+    with open(args.outfile, 'w') as f:
+        for val in constructed_line:
+            f.write(f"{str(val)}\n")
 
 
 
