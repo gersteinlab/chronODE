@@ -334,13 +334,14 @@ with torch.no_grad():
 
 print("All done! Saving!")
 
-## save model ###  ## to save a Pytorch model use:
-torch.save(model, 'model_name.pth')
-
 # save predictions
-
+all_pred_y = np.squeeze(all_pred_y)
 all_pred_y = pd.DataFrame(all_pred_y)
 all_pred_y.to_csv("testpreds.tsv", sep="\t")
+print("Saved predictions! Trying the model next")
+
+## save model state
+torch.save(model.state_dict(), 'model_name.pth')
 
 
 # there were a huge number of plots here

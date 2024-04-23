@@ -3,7 +3,9 @@
 # Imports
 import pandas as pd
 import numpy as np
-print("frog on the floor")
+import argparse
+import sys
+print("hoo boy")
 
 def euler(t_prev,y_prev, deriv_prev,t_next):
     "apply the Euler method"
@@ -24,7 +26,6 @@ def run_euler(initial_point, all_y_pred):
     constructed_line = []
     y=initial_point  ## initial point is the real point
     y0=[initial_point]
-    print(len(all_y_pred))
 
     for i in range(0,105):
       
@@ -41,62 +42,93 @@ def run_euler(initial_point, all_y_pred):
     constructed_line = y0+constructed_line 
     return constructed_line
 
-# get parameters to run the Euler method
+# Parse command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--valuesfile", type=str,
+                help="Input file with actual values")
+parser.add_argument("-p", "--predictfile", type=str,
+                help="Input file with predicted derivatives") 
+parser.add_argument("-o", "--outfile", type=str,
+                help="Output filepath")                
+parser.add_argument("-t", "--timepoints", type=str, default=105,
+                help="Number of time points in the data")  
+parser.add_argument("-m", "--mode", type=str, default="all",
+                help="Running mode")  
+parser.add_argument("-g", "--geneid", type=str, default="",
+                help="Gene ID to use with single gene mode")    
+args = parser.parse_args()
 
-geneid = "ENSMUSG00000015942" #TODO oh NO what IS this
-#cCRE id EM10D1960585
+print(args.mode)
+if args.mode != "gene":
+    print("Only single-gene mode currently supported")
+elif args.gene == "":
+    print("Please specify an ENSEMBL ID to use single-gene mode. Exiting.")
+    sys.exit()
 
-# TODO parameterize
-rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
-real_values_geneid = geneid
-index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
-initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
+# Load "true" values
+rna_actual_pipe = pd.read_csv(args.valuesfile,sep = '\t' )
 
-### run euler for the NN
+if args.mode == "gene":
+    real_values_geneid = args.geneid
+    index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
+    initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
 
-# # TODO parameterize
-# rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
-# real_values_geneid = geneid
-# index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
-# initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
+# Load predicted derivatives
+pred_data = pd.read_csv(args.predictfile, sep = '\t')
+pred_data['gene_id'] = pred_data['combined_index'].str.split('-', expand=True)[0] #TODO parameterize this as optional???
+pred_data.drop('combined_index', axis=1, inplace=True)
 
-# all_y_pred = all_pred_y[index_gene].tolist()[0] 
-# all_y_pred = [i[0]for i in all_y_pred]
-# constructed_line = run_euler(initial_real_value_gene, all_y_pred)
+if args.mode == "gene":
+    pred_index = pred_data[pred_data['gene_id']== f'{args.geneid}'].index[0]
+    pred = pred_data.iloc[pred_index,0:-1].values.tolist()
+else:
+    # Select ONLY the genes that are present in both files
+    intersect = rna_actual_pipe.merge(pred_data, on="gene_id")
+    if len(intersect.index) == 0:
+        print("No matching genes found. Check your file formats.")
+        sys.exit()
+    
 
-# ## run euler for the RF
+# Construct line (gene mode)
+if args.mode == "gene":
+    constructed_line = run_euler(initial_real_value_gene, pred)
 
-rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
-real_values_geneid = geneid
-index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
-initial_real_value_gene =  rna_actual_pipe.iloc[index_geneid,1]
+# Print output (gene mode)
+if args.mode == "gene":
+    print('true values', rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'], '\n')
+    print('reconstructed values', constructed_line[0:105], '\n')
 
-RF_pred_data = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/models/RF/predictions/negcorr_pred_jan11.tsv', sep = '\t')
-#RF_pred = RF_pred_data.iloc[4,1:-1].tolist()  ### put the row number
-RF_pred_data['gene_id'] = RF_pred_data['combined_index'].str.split('-', expand=True)[0] #TODO parameterize this as optional???
-RF_pred_data.drop('combined_index', axis=1, inplace=True)
+# all mode 
+if args.mode == "all":
+    reconstructions = []
+    for i in range(0, len(intersect.index)):
+        initial_real_value_gene = intersect.iloc[i, 1]
+        preds = intersect.iloc[i, (args.timepoints +1):]
+        print("yes that slice worked...?")
+        constructed_line = run_euler(initial_real_value_gene, preds)
+        reconstructions.append(constructed_line)
 
-RF_pred = RF_pred_data.iloc[0,0:-1].values.tolist() # TODO this is NOT the right value
+    reconstructions = pd.DataFrame(reconstructions)
+    print(reconstructions)
+    print("Ciao!")
 
-print(RF_pred_data.columns)
-print("bar")
-print(RF_pred)
-constructed_line = run_euler(initial_real_value_gene, RF_pred)
+
+
+
 
 
 ## plot euler
 
-# TODO parameterize
-rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
+# # TODO parameterize
+# rna_actual_pipe = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/ODE/rna/values/forebrain.jan8.tsv',sep = '\t' )
 
-real_values_geneid = geneid 
-index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
-real_values_gene =  rna_actual_pipe.iloc[index_geneid,1:]
+# real_values_geneid = geneid 
+# index_geneid = rna_actual_pipe[rna_actual_pipe['gene_id']== f'{real_values_geneid}'].index[0]
+# real_values_gene =  rna_actual_pipe.iloc[index_geneid,1:]
 
 #print('cCRE id', ccreid)
 #print('gene id', real_values_geneid, '\n')
-print('true values', real_values_gene.tolist(), '\n')
-print('reconstructed values', constructed_line[0:105], '\n')
+
 
 # plt.plot(t[0:105], constructed_line[0:105], linewidth=3, c='c')
 # plt.plot(t[0:105],real_values_gene.tolist()[0:105], linewidth=3, c='r')
