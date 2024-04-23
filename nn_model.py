@@ -337,7 +337,7 @@ print("All done! Saving!")
 # save predictions
 all_pred_y = np.squeeze(all_pred_y)
 all_pred_y = pd.DataFrame(all_pred_y)
-all_pred_y.to_csv("testpreds.tsv", sep="\t")
+all_pred_y.to_csv("testpreds.tsv", sep="\t", index=False)
 print("Saved predictions! Trying the model next")
 
 ## save model state
