@@ -208,8 +208,32 @@ python randomforest.py \
 
 ### Dependencies
 ### Input requirements
+`usage: nn_model.py [-h] [-i INPUTFILE] [-p PREDICTFILE] [-S SUBSET] [-t TIMEPOINTS] [-n NEURALNETFILE] [-m MODALITIES] [-s SPLIT]
+                   [-r RANDOMSEED]`
+Required arguments:
+```
+  -i INPUTFILE, --inputfile INPUTFILE
+                        Input file with paired RNA and OC values
+  -p PREDICTFILE, --predictfile PREDICTFILE
+                        File to write predictions to
+  -S SUBSET, --subset SUBSET
+                        Subset to model (choose "pos" or "neg")
+```
+Optional arguments:
+  -h, --help            show this help message and exit
+  -t TIMEPOINTS, --timepoints TIMEPOINTS
+                        Number of time points in the data
+  -n NEURALNETFILE, --neuralnetfile NEURALNETFILE
+                        Filepath to save model, if used must end in .pth
+  -m MODALITIES, --modalities MODALITIES
+                        Number of input data modalities
+  -s SPLIT, --split SPLIT
+                        Fraction of input to use as test set
+  -r RANDOMSEED, --randomseed RANDOMSEED
+                        Random seed
 ### File formats
 ### Example
+
 
 ## Euler Method Reconstruction
 
