@@ -106,12 +106,13 @@ if args.mode == "all":
         reconstructions.append(constructed_line)
 
     reconstructions = pd.DataFrame(reconstructions)
+    reconstructions.index = intersect.gene_id
     print(reconstructions)
     print("Ciao!")
 
 # Save results
 if args.mode == "all":
-    reconstructions.to_csv(args.outfile, sep="\t", index=False)
+    reconstructions.to_csv(args.outfile, sep="\t")
 else:
     with open(args.outfile, 'w') as f:
         for val in constructed_line:

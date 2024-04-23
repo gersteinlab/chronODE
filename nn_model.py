@@ -18,32 +18,35 @@ import math
 import argparse
 
 # Parse command-line arguments
-# parser = argparse.ArgumentParser()
-# parser.add_argument("-i", "--inputfile", type=str,
-#                 help="Input file with paired RNA and OC values")
-# parser.add_argument("-p", "--predictfile", type=str,
-#                 help="File to write predictions to")  
-# parser.add_argument("-t", "--timepoints", type=str, default=105,
-#                 help="Number of time points in the data")
-# parser.add_argument("-n", "--neuralnetfile", type=str, default=None
-#                 help="Filepath to save model, if used must end in .pth")                  
-# parser.add_argument("-m", "--modalities", type=str, default=1,
-#                 help="Number of input data modalities")  
-# parser.add_argument("-s", "--split", type=str, default=0.2,
-#                 help="Fraction of input to use as test set")                
-# parser.add_argument("-r", "--randomseed", type=str, default=1941,
-#                 help="Random seed")        
-# args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--inputfile", type=str,
+                help="Input file with paired RNA and OC values")
+parser.add_argument("-p", "--predictfile", type=str,
+                help="File to write predictions to")  
+parser.add_argument("-S", "--subset", type=str, default="pos",
+                help="Subset to model")                
+parser.add_argument("-t", "--timepoints", type=str, default=105,
+                help="Number of time points in the data")
+parser.add_argument("-n", "--neuralnetfile", type=str, default=None,
+                help="Filepath to save model, if used must end in .pth")                  
+parser.add_argument("-m", "--modalities", type=str, default=1,
+                help="Number of input data modalities")  
+parser.add_argument("-s", "--split", type=str, default=0.2,
+                help="Fraction of input to use as test set")                
+parser.add_argument("-r", "--randomseed", type=str, default=1941,
+                help="Random seed")        
+args = parser.parse_args()
 
 ### Get data: Open chromatin signals and rna expression derivatives over time
 
 # Read the databases of downregulated (decreasing) cCREs and upregulated (increasing) cCREs
 
-# TODO replace hardcoded paths
-data_down = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/models/input/onetoone/downreg.filtered.merge.ESW.tsv',sep = '\t' )
-data_up = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/models/input/onetoone/upreg.filtered.merge.ESW.tsv',sep = '\t' )
 
-data = pd.concat([data_up,data_down], ignore_index=True)
+# data_down = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/models/input/onetoone/downreg.filtered.merge.ESW.tsv',sep = '\t' )
+# data_up = pd.read_csv('/gpfs/gibbs/pi/gerstein/bb.shared.projects/brain-comp-dev/analyses/mouse/models/input/onetoone/upreg.filtered.merge.ESW.tsv',sep = '\t' )
+
+# data = pd.concat([data_up,data_down], ignore_index=True)
+data = pd.read_csv(args.inputfile, sep="\t")
 data.drop_duplicates(inplace=True, keep='first', ignore_index = True)
 # data.head()
 
@@ -53,7 +56,7 @@ data.drop_duplicates(inplace=True, keep='first', ignore_index = True)
 
 print("which model do you want to run? for positively correlated OC-RNA type pos for negatively correlated type neg")
 #user_input = input()
-user_input = "pos" # for debugging
+user_input = args.subset
 
 print(f'user choice is {user_input}')
 
@@ -133,18 +136,18 @@ print("needles and pins")
 
 ### NN model
 
-# TODO should this b parameterized?
+# TODO should this be parameterized?
 batch_size_train = 4 ## can be changed to improve performance, larger--> runs faster. should be changed in train dataloader as well
 batch_size_val = 1 
 batch_size_test = 1 
 
 #split the data into training set (80%) and temporary set (20%)
 
-# TODO parameterize train-test split
-X_train1, X_test1, y_train1, y_test1, train_indexes1, test_indexes1 = train_test_split(X1, y1, np.arange(len(X1)),test_size=0.2, random_state=42)
 
-# TODO parameterize
-n_points = 105
+X_train1, X_test1, y_train1, y_test1, train_indexes1, test_indexes1 = train_test_split(X1, y1, np.arange(len(X1)),test_size=args.split, random_state=42)
+
+
+n_points = args.timepoints
 
 X_train1 = X_train1.reshape(-1, 1, n_points) 
 
@@ -167,7 +170,7 @@ torch.manual_seed(42)
 num_samples = y1.shape[0]
 
 
-time_steps = 105 # TODO shouldn't these be set based on earlier values??
+time_steps = args.timepoints
 num_features = 1 # set number of features
 batch_size = 4  # Define the batch size
 loss_train_epoch = []
@@ -337,7 +340,7 @@ print("All done! Saving!")
 # save predictions
 all_pred_y = np.squeeze(all_pred_y)
 all_pred_y = pd.DataFrame(all_pred_y)
-all_pred_y.to_csv("testpreds.tsv", sep="\t", index=False)
+all_pred_y.to_csv(args.predictfile, sep="\t", index=False)
 print("Saved predictions! Trying the model next")
 
 ## save model state
