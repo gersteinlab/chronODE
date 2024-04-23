@@ -8,7 +8,7 @@ An ODE-based  pipeline for interpolating values and derivatives from time-series
 
 ***
 
-## *chronODE*
+## Data interpolation and ODE fitting
 
 ### Dependencies
 ```
@@ -93,7 +93,7 @@ Run pipeline on DNase-seq data from human brain decreasing cCREs:
       --derivsfile "example_dir/dnase_derivs.tsv" \
       --paramsfile "example_dir/dnase_params.tsv"
 
-## Switching time classifier
+## Estimating switching time and sorting curves
 
 ### Dependencies
 ```
@@ -341,3 +341,4 @@ python euler_method.py \
 	--outfile "myfolder/rf_euler.tsv" \
 	--mode "all"
 ```
+
