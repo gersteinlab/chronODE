@@ -59,9 +59,9 @@ EM10D0046746	0.158520542990051	0.207235934578883	0.0882546996858981	0.0342933724
 ```
 The parameters output will be tab-separated and have a row for each element and have columns for the k and b parameters, mean squared error (MSE), fuction sign, the vertical move applied to the data, user-specified group, and user-specified region:  
 ```
-cCRE_id	        k	                    b	                  MSE	            sign_func	TYPE	    MOVE	              group	  region
-EM10D0043278	-0.053382675494526265	124805.313024191	 0.02775699273405798	  1.0	upward	  0.9962693785260658	downreg	forebrain
-EM10D0046746	-0.8540763957605665	  0.9343163272858892	0.011764908795083247	1.0	original	0.0	                downreg	forebrain
+cCRE_id	        k	                b	                MSE	                sign_func	TYPE	        MOVE	              group	  region
+EM10D0043278	-0.053382675494526265	124805.313024191	0.02775699273405798	1.0	        upward	        0.9962693785260658    downreg	  forebrain
+EM10D0046746	-0.8540763957605665	0.9343163272858892	0.011764908795083247	1.0	        original	0.0	              downreg	  forebrain
 ```
 The derivatives and values output files will be tab-separated and have a row for each element and a column for each interpolated timepoint:
 ```
