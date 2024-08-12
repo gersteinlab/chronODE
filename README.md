@@ -8,9 +8,17 @@ An ODE-based  pipeline for interpolating values and derivatives from time-series
 
 ***
 
-## Data interpolation and ODE fitting
+## ODE fitting
 
 #### Dependencies
+
+These Nextflow pipelines are written in Nextflow DSL2 and require TODO
+
+R libraries:
+```
+TODO
+```
+Python libraries:
 ```
 argparse
 numpy
@@ -19,79 +27,50 @@ scipy
 ```
 #### Input requirements
 
-Usage: `ODE_fitting_posvals.py [-h] [-i INPUTFILE] [-t TIMEPOINTS] [-T TIMECOURSE] [-g GROUP] [-r REGION] [-a ASSAY] [-v VALUESFILE] [-d DERIVSFILE]
-                              [-p PARAMSFILE] [-f FOLDER]`
-                                
-Required arguments:
+Usage: `nextflow run chronode.nf [options]`
+Parameters: 
 ```
-  -i INPUTFILE, --inputfile INPUTFILE
-                        Input file with values at a handful of timepoints
-  -v VALUESFILE, --valuesfile VALUESFILE
-                        Values output file
-  -d DERIVSFILE, --derivsfile DERIVSFILE
-                        Derivatives output file
-  -p PARAMSFILE, --paramsfile PARAMSFILE
-                        Parameters output file
-  -f FOLDER, --folder FOLDER
-                        Base filepath for file names
+ --infile   Input matrix (should already be fully transformed)
+ --size     Chunk size (affects speed but not final output). We recommend ~10% of the file length, depending on available resources.
+ --out      Prefix for output files
+ --dir      Output directory
+ --timesfile  File of timepoints
 ```
-Optional arguments:
-```
-  -h, --help            show this help message and exit
-
-  -t TIMEPOINTS, --timepoints TIMEPOINTS
-                        Number of timepoints to interpolate; defaults to 105
-  -T TIMECOURSE, --timecourse TIMECOURSE
-                        Set of initial timepoints to use, either mouse (default) or human
-  -g GROUP, --group GROUP
-                        expression pattern; defauts to 'unknown'
-  -r REGION, --region REGION
-                        Mouse brain region; defaults to 'unknown'
-  -a ASSAY, --assay ASSAY
-                        Assay suffix to put on column names; defaults to 'x'
-```
+Nextflow offers a number of other optional parameters that may be useful for debugging if errors occur.
 #### File formats
-The tab-separated input file needs one row per gene/regulatory element, one index column, and a column for each time point in the original data:  
+The tab-separated main input file needs one row per gene/regulatory element, one index column, and a column for each time point in the original data:  
 ```
 cCRE_id	        E10.5	                E11.5	                E12.5	                E13.5	                E14.5	                E15.5	                E16.5	                PN
 EM10D0043278	0.112209163706003	0.263615771996068	0.101058746899128	0.00109066358305005	-0.0733457337036519	-0.155362226485118	-0.130227596077729	-0.103008112890712
 EM10D0046746	0.158520542990051	0.207235934578883	0.0882546996858981	0.0342933724159356	-0.0391589358988853	-0.136999257336671	-0.328550015608365	-0.181150203360637
 ```
-The parameters output will be tab-separated and have a row for each element and have columns for the k and b parameters, mean squared error (MSE), fuction sign, the vertical move applied to the data, user-specified group, and user-specified region:  
+The time course must be specified using a .csv file listing all time points in numeric form on one line:
 ```
-cCRE_id	        k	                b	                MSE	                sign_func	TYPE	        MOVE	              group	  region
-EM10D0043278	-0.053382675494526265	124805.313024191	0.02775699273405798	1.0	        upward	        0.9962693785260658    downreg	  forebrain
-EM10D0046746	-0.8540763957605665	0.9343163272858892	0.011764908795083247	1.0	        original	0.0	              downreg	  forebrain
+10.5,11.5,12.5,13.5,14.5,15.5,16.5,21
+```
+
+The parameters output will be tab-separated and have a row for each element and have columns for the k and b parameters fitted to the data, mean squared error (MSE), the range that the data were shifted into for the fitting, and a rescaled value of b based on the original range.
+```
+cCRE_id		k			b			MSE			range	rescaled_b
+EM10D2246738	0.120000858009469	239089.428129566	0.0557348329407984	0-1	127612.186705749
+EM10D2246742	1.03068354441858	0.886385177421958	0.0237505021001379	0-1	2.88606678854373
 ```
 The derivatives and values output files will be tab-separated and have a row for each element and a column for each interpolated timepoint:
 ```
-cCRE_id		10.5_oc			10.601_oc		10.702_oc		...	20.798_oc		20.899_oc		21.0_oc
-EM10D0043278	-0.08727414570298016	-0.08680505073426538	-0.0863384770664966	...	-0.05036650875841838	-0.05009578784751738	-0.04982652204472581
-EM10D0046746	-0.02097416583664084	-0.022752174901581188	-0.024670440353401078	...	-0.004305420230519206	-0.003953267439604704	-0.0036296506721193054
+cCRE_id		X10.5			X11.5			X12.5			X13.5			X14.5			X15.5			X16.5			X21.0
+EM10D1138540	1.51000458715981	1.43871659514363	1.34337943231759	1.23596323549907	1.13599611554697	1.05821095446409	1.00569653913472	0.937419990935623
+EM10D1138541	1.70323032149406	1.40624378601762	1.20345995048573	1.06499817485729	0.970455811708974	0.905901834291343	0.861824070290061	0.783982973335906
 ```
-#### Examples
-Run pipeline on RNAseq data from mouse forebrain:  
-
-    python ODE_fitting_posvals.py \
-      --inputfile "example_dir/rna_example_input.tsv" \
-      --timepoints 105 \
-      --timecourse "mouse" \
-      --region "forebrain" \
-      --assay "RNAseq" \
-      --valuesfile "example_dir/rna_vals.tsv" \
-      --derivsfile "example_dir/rna_derivs.tsv" \
-      --paramsfile "example_dir/rna_params.tsv"
-Run pipeline on DNase-seq data from human brain decreasing cCREs:  
-
-    python ODE_fitting_posvals.py \
-      --inputfile "example_dir/human_dnase.tsv" \
-      --timepoints 105 \
-      --timecourse "human" \
-      --group "decreasing" \
-      --assay "DNase" \
-      --valuesfile "example_dir/dnase_vals.tsv" \
-      --derivsfile "example_dir/dnase_derivs.tsv" \
-      --paramsfile "example_dir/dnase_params.tsv"
+#### Example
+```
+nextflow run chronode.nf \
+  --infile example_input.tsv \
+  --out forebrain_test \
+  --size 3 \
+  --dir example_output/ \
+  --timesfile mouse.timecourse.csv
+```
+TODO nothing beyond this point has been updated
 
 ## Estimating switching time and classifying curves
 
