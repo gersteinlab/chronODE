@@ -24,6 +24,7 @@ argparse
 numpy
 pandas
 scipy
+TODO
 ```
 #### Input requirements
 
@@ -36,7 +37,7 @@ Parameters:
  --dir      Output directory
  --timesfile  File of timepoints
 ```
-Nextflow offers a number of other optional parameters that may be useful for debugging if errors occur.
+Nextflow offers a number of other optional parameters, including `--help` and `-with-trace` that may be useful for debugging if errors occur.
 #### File formats
 The tab-separated main input file needs one row per gene/regulatory element, one index column, and a column for each time point in the original data:  
 ```
@@ -55,7 +56,7 @@ cCRE_id		k			b			MSE			range	rescaled_b
 EM10D2246738	0.120000858009469	239089.428129566	0.0557348329407984	0-1	127612.186705749
 EM10D2246742	1.03068354441858	0.886385177421958	0.0237505021001379	0-1	2.88606678854373
 ```
-The derivatives and values output files will be tab-separated and have a row for each element and a column for each interpolated timepoint:
+The derivatives, fitted values, and rescaled values output files will be tab-separated and have a row for each element and a column for each interpolated timepoint:
 ```
 cCRE_id		X10.5			X11.5			X12.5			X13.5			X14.5			X15.5			X16.5			X21.0
 EM10D1138540	1.51000458715981	1.43871659514363	1.34337943231759	1.23596323549907	1.13599611554697	1.05821095446409	1.00569653913472	0.937419990935623
@@ -70,42 +71,38 @@ nextflow run chronode.nf \
   --dir example_output/ \
   --timesfile mouse.timecourse.csv
 ```
-TODO nothing beyond this point has been updated
 
-## Estimating switching time and classifying curves
+## Filtering for statistical significance and classifying curves
 
 #### Dependencies
+R libraries
 ```
 optparse
+TODO
 ```
+Python libraries
+```
+TODO
+```
+See above for Nextflow requirements.
+
 #### Input requirements
-`Usage: switching.time.labels.R [options]`  
-Required arguments:
+Usage: `nextflow run chronode.nf [options]`
+Parameters: 
 ```
-        -p PARAMSFILE, --paramsfile=PARAMSFILE
-                Parameters file to use as input
-
-        -v VALUESFILE, --valuesfile=VALUESFILE
-                Values file to use as input
-
-        -o OUTFILE, --outfile=OUTFILE
-                Name of output file.
+ --orig            Matrix of original values
+ --fitted          Matrix of fitted values (0-1 or 1-2 range)
+ --rescfitted      Matrix of fitted rescaled values (original range)
+ --deriv           Matrix of derivatives
+ --par             Matrix of parameters
+ --tokeep          Output file for list of reproducibly fitted elements
+ --size            Chunk size (affects speed but not final output)
+ --tstart          Initial time point of the time course
+ --tend            Last time point of the time course
+ --out             Prefix for all other output files
+ --dir             Output directory
 ```
-Optional arguments:
-```
-
-        -s START, --start=START
-                Start time (in days), defaults to 10.5
-
-        -e END, --end=END
-                End time (in days), defaults to 21
-
-        -g GROUP, --group=GROUP
-                Pattern filter (increasing or decreasing), defaults to none
-
-        -h, --help
-                Show help message and exit
-```
+TODO nothing beyond this point has been updated
 #### File formats
 The input files should be the output values and parameters from a single chronODE run:
 ```
