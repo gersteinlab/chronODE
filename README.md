@@ -16,7 +16,8 @@ These Nextflow pipelines are written in Nextflow DSL2 and require TODO
 
 R libraries:
 ```
-TODO
+data.table
+optparse
 ```
 Python libraries:
 ```
@@ -24,7 +25,6 @@ argparse
 numpy
 pandas
 scipy
-TODO
 ```
 #### Input requirements
 
@@ -56,7 +56,7 @@ cCRE_id		k			b			MSE			range	rescaled_b
 EM10D2246738	0.120000858009469	239089.428129566	0.0557348329407984	0-1	127612.186705749
 EM10D2246742	1.03068354441858	0.886385177421958	0.0237505021001379	0-1	2.88606678854373
 ```
-The derivatives, fitted values, and rescaled values output files will be tab-separated and have a row for each element and a column for each interpolated timepoint:
+The derivatives, fitted values, and rescaled fitted values output files will be tab-separated and have a row for each element and a column for each interpolated timepoint:
 ```
 cCRE_id		X10.5			X11.5			X12.5			X13.5			X14.5			X15.5			X16.5			X21.0
 EM10D1138540	1.51000458715981	1.43871659514363	1.34337943231759	1.23596323549907	1.13599611554697	1.05821095446409	1.00569653913472	0.937419990935623
@@ -77,12 +77,17 @@ nextflow run chronode.nf \
 #### Dependencies
 R libraries
 ```
+data.table
 optparse
-TODO
 ```
 Python libraries
 ```
-TODO
+argparse
+matplotlib
+numpy
+pandas
+scipy
+sklearn
 ```
 See above for Nextflow requirements.
 
@@ -104,32 +109,53 @@ Parameters:
 ```
 TODO nothing beyond this point has been updated
 #### File formats
-The input files should be the output values and parameters from a single chronODE run:
+The "original values" input should match the input given to `chronode.nf`:
 ```
-cCRE_id		10.5_oc			10.601_oc		10.702_oc		...	20.798_oc		20.899_oc		21.0_oc
-EM10D0043278	-0.08727414570298016	-0.08680505073426538	-0.0863384770664966	...	-0.05036650875841838	-0.05009578784751738	-0.04982652204472581
-EM10D0046746	-0.02097416583664084	-0.022752174901581188	-0.024670440353401078	...	-0.004305420230519206	-0.003953267439604704	-0.0036296506721193054
+cCRE_id	        E10.5	                E11.5	                E12.5	                E13.5	                E14.5	                E15.5	                E16.5	                PN
+EM10D0043278	0.112209163706003	0.263615771996068	0.101058746899128	0.00109066358305005	-0.0733457337036519	-0.155362226485118	-0.130227596077729	-0.103008112890712
+EM10D0046746	0.158520542990051	0.207235934578883	0.0882546996858981	0.0342933724159356	-0.0391589358988853	-0.136999257336671	-0.328550015608365	-0.181150203360637
 ```
+The fitted values, rescaled fitted values, derivatives, and parameters input files should all be the output of the same `chronode.nf` run. Parameters will be in this format:
 ```
-cCRE_id	        k	                b	                MSE	            	sign_func	TYPE	    	MOVE	              	group	  	region
-EM10D0043278	-0.053382675494526265	124805.313024191	0.02775699273405798	1.0		upward	  	0.9962693785260658	downreg		forebrain
-EM10D0046746	-0.8540763957605665	0.9343163272858892	0.011764908795083247	1.0		original	0.0	                downreg		forebrain
+cCRE_id		k			b			MSE			range	rescaled_b
+EM10D2246738	0.120000858009469	239089.428129566	0.0557348329407984	0-1	127612.186705749
+EM10D2246742	1.03068354441858	0.886385177421958	0.0237505021001379	0-1	2.88606678854373
 ```
-The output file is identical to the parameters input, but with columns added:
+The other inputs will match this format:
 ```
-cCRE_id		k			b			MSE			sign_func	TYPE		MOVE			group		region		switching_time		saturation_time		minimum_time		label
-EM10D0043278	-0.0533826754945263	124805.313024191	0.027756992734058	1		upward		0.996269378526066	decreasing	forebrain	-200.109828054027	-286.188688050577	490.027208851933	decelerator
-EM10D0046746	-0.854076395760566	0.934316327285889	0.0117649087950832	1		original	0			decreasing	forebrain	14.6963669566587	9.31614585121227	57.8322757240436	switcher
+cCRE_id		X10.5			X11.5			X12.5			X13.5			X14.5			X15.5			X16.5			X21.0
+EM10D1138540	1.51000458715981	1.43871659514363	1.34337943231759	1.23596323549907	1.13599611554697	1.05821095446409	1.00569653913472	0.937419990935623
+EM10D1138541	1.70323032149406	1.40624378601762	1.20345995048573	1.06499817485729	0.970455811708974	0.905901834291343	0.861824070290061	0.783982973335906
 ```
+Since the primary purpose of this pipeline is to filter for elements with fittings that were significantly better than chance, the values and derivatives files written to the output folder will match this format. The parameters output file gains new columns for p-value; false discovery rate; switching, saturation, and minimum value times; and curve type label:
+```
+cCRE_id		k			b			MSE			range	rescaled_b		p_value	fdr			switching_time		saturation_time		minimum_time		label
+EM10D0003671	0.43205032869845	1.83112864273929	0.0194138648640473	1-2	2.0548505010826		9e-04	0.0032967032967033	10.0718746657964	20.707487104693		-75.1991204955525	decelerator
+EM10D0025456	0.148647765682023	2.67818093513838	0.0081090349057552	1-2	2.49305490786101 	5e-04	0.00273224043715847	13.9827932173133	44.8956012844332	-233.860565334831	switcher
+```
+The list of significant elements will be in this tab-separated format: TODO this seems weird to me
+```
+cCRE_id		k.rep1	b.rep1	MSE.rep1	range.rep1	rescaled_b.rep1		k.rep2	b.rep2	MSE.rep2	range.rep2	rescaled_b.rep2		mse.diff	k.diff	b.diff
+EM10D0003671	0.4321	1.8311	0.0194		1-2		2.0548505010826		0.4321	1.8311	0.0194		1-2		2.0548505010826		0		0	0
+EM10D0025456	0.1486	2.6782	0.0081		1-2		2.49305490786101	0.1486	2.6782	0.0081		1-2		2.49305490786101	0		0	0
+```
+
 #### Example
 ```
-Rscript switching.time.labels.R \
-    -p example_data/oc_params.tsv \
-    -v example_data/oc_vals.tsv \
-    -o example_data/oc_labeled.tsv \
-    -s 10.5 \
-    -e 21
+nextflow run mse.classification.nf \
+  --orig example_input.tsv \
+  --fitted example_output/forebrain_test.values.tsv \
+  --rescfitted example_output/forebrain_test.rescaled.values.tsv \
+  --deriv example_output/forebrain_test.derivatives.tsv \
+  --par example_output/forebrain_test.values.tsv \
+  --tokeep forebrain.test.tokeep.tsv \
+  --out forebrain_test \
+  --size 3 \
+  --dir example_output/results/ \
+  --tstart 10.5 \
+  --tend 21
 ```
+TODO nothing beyond this point has been edited
 ## Predicting time-series gene expression velocities from chromatin velocity  of associated cCREs
 
 ### Random Forest
