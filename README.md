@@ -12,7 +12,7 @@ An ODE-based  pipeline for interpolating values and derivatives from time-series
 
 #### Dependencies
 
-These Nextflow pipelines are written in Nextflow DSL2 and require TODO
+These Nextflow pipelines are written in Nextflow DSL2.
 
 R libraries:
 ```
