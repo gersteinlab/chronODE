@@ -78,7 +78,7 @@ nextflow run chronode.nf \
 ```
 python chronODE_biRNN_model.py
 ```
-Inside models/biRNN, there is a separate file for each of the four trained models (Enhancer Monopattern, Enhancer Polypattern, Silencer Monopattern, Silencer Polypattern).
+Inside ```models/biRNN```, there is a separate file for each of the four trained models (Enhancer Monopattern, Enhancer Polypattern, Silencer Monopattern, Silencer Polypattern).
 
 
 ## License
