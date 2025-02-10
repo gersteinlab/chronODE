@@ -8,7 +8,7 @@ An ODE-based  pipeline for interpolating values and derivatives from time-series
 
 ***
 
-## ODE fitting
+## Monotonic fitting
 
 #### Dependencies
 
@@ -78,6 +78,8 @@ nextflow run chronode.nf \
 ```
 python chronODE_biRNN_model.py
 ```
+Inside models/biRNN, there is a separate file for each of the four trained models (Enhancer Monopattern, Enhancer Polypattern, Silencer Monopattern, Silencer Polypattern).
+
 
 ## License
 Copyright 2024 Yale University.
