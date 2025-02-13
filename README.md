@@ -72,6 +72,11 @@ nextflow run chronode.nf \
   --timesfile mouse.timecourse.csv
 ```
 
+## Piecewise fitting
+```
+python piecewise.fitting.py
+```
+
 ## Temporal prediction of gene expression
 
 ### bidirectional Recurrent Neural Network (biRNN)
