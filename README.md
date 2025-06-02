@@ -10,17 +10,22 @@ An ODE-based framework for modelling logistic and peak-like time-series multi-om
 
 ## Monotonic fitting
 
-#### Dependencies
+### Dependencies
 
 The chronODE pipeline for monotonic fitting is written in [Nextflow](https://www.nextflow.io/) DSL2.
 The list of dependencies is provided in the `chronode.yml` file (see above). 
-To create the corresponding conda environment, please run: 
 
+### Quickstart (~5 min)
 ```
+git clone https://github.com/gersteinlab/chronODE
+cd chronODE
 conda env create -f chronode.yml
+conda activate chronode_env
+cwd=$(pwd)
+nextflow run scripts/chronode.nf  --infile $cwd/example_data/input/input.matrix.tsv  --out example.output  --size 3  --dir $cwd/example_data/test --timesfile $cwd/example_data/input/mouse.timecourse.csv
 ```
 
-#### Input requirements
+### Pipeline Usage
 
 Usage: `nextflow run chronode.nf [options]`
 
@@ -34,6 +39,7 @@ Parameters:
 ```
 
 Nextflow offers a number of other optional parameters, including `--help` and `-with-trace` that may be useful for debugging if errors occur.
+
 #### File formats
 The tab-separated main input file needs one row per gene/regulatory element, one index column, and a column for each time point in the original data. Below, we provide an example for two candidate cis-regulatory elements (cCREs):
 ```
@@ -67,28 +73,19 @@ cCRE_id       E10.5             E11.5             E12.5             E13.5       
 EM10D0144246  1.92265260038112  2.01453994115168  2.22955836852258  2.43480368195092  2.51693257926945  2.53807509249146  2.54283806152758  2.54387763550249
 EM10D1047237  1.44726021325062  1.44020555489426  1.34014945343893  1.11954446308323  1.08206670365814  1.07996880889247  1.07986338380165  1.07985811604938
 ```
-#### Example
-```
-nextflow run chronode.nf \
-  --infile example_data/input/input.matrix.tsv \
-  --out example.output \
-  --size 3 \
-  --dir example_data/output \
-  --timesfile example_data/input/mouse.timecourse.csv
-```
 
 ## Piecewise fitting
 ```
-python piecewise.fitting.py
+python scripts/piecewise.fitting.py
 ```
 
 ## Temporal prediction of gene expression
 
 ### bidirectional Recurrent Neural Network (biRNN)
 ```
-python chronODE_biRNN_model.py
+python scripts/chronODE_biRNN_model.py
 ```
-Inside ```models/biRNN```, there is a separate file for each of the four trained models (Enhancer Monopattern, Enhancer Polypattern, Silencer Monopattern, Silencer Polypattern).
+Inside ```models/biRNN```, we have made available a separate file for each of the four trained models (Enhancer Monopattern, Enhancer Polypattern, Silencer Monopattern, Silencer Polypattern).
 
 
 ## License
