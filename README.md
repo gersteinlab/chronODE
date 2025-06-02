@@ -23,14 +23,16 @@ conda env create -f chronode.yml
 #### Input requirements
 
 Usage: `nextflow run chronode.nf [options]`
+
 Parameters: 
 ```
- --infile   Input matrix (should already be fully transformed)
- --size     Chunk size (affects speed but not final output). We recommend ~10% of the file length, depending on available resources.
- --out      Prefix for output files
- --dir      Output directory
- --timesfile  File of timepoints
+ --infile     Input matrix 
+ --size       Chunk size (affects speed but not final output). We recommend ~10% of the file length, depending on available resources.
+ --out        Prefix for output files
+ --dir        Output directory
+ --timesfile  File of time-points
 ```
+
 Nextflow offers a number of other optional parameters, including `--help` and `-with-trace` that may be useful for debugging if errors occur.
 #### File formats
 The tab-separated main input file needs one row per gene/regulatory element, one index column, and a column for each time point in the original data:  
