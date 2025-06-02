@@ -1,4 +1,4 @@
-# The chronode framework for modelling multi-omic time series with ordinary differential equations and machine learning
+# The chronODE framework for modelling multi-omic time series with ordinary differential equations and machine learning
 Beatrice Borsari, Mor Frank, Eve S. Wattenberg, Susanna X. Liu, Xuezhu Yu, Mark Gerstein  
 [bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2023.12.13.571513v1)  
 
@@ -49,9 +49,9 @@ The time course must be specified using a .csv file listing all time points in n
 
 The parameters output will be tab-separated and have a row for each element and have columns for the k and b parameters fitted to the data, mean squared error (MSE), the range that the data were shifted into for the fitting, and a rescaled value of b based on the original range.
 ```
-cCRE_id	k	b_starred	MSE	a	b	R_min	R_max	z_min	z_max	z_start	kinetic_class	switching_time	saturation_time	minimum_time
-EM10D0144246	1.02066198626769	0.972883868461625	0.0162867863978315	1.89139110389425	2.54416517604565	1e-05	1	1.89139781357557	2.56235923617873	1.92265260038112	switcher	13.429223902119	17.9313214740467	-22.6663317113752
-EM10D1047237	-1.99779861566745	1.00103040140379	0.00245095219378508	1.07985783907675	1.44763878517272	1e-05	1	1.07986151310049	1.44726021325062	1.44726021325062	switcher	13.9426932656304	11.6426016477376	32.3836718502493
+cCRE_id       k                  b_starred          MSE                  a                 b                 R_min  R_max  z_min             z_max             z_start           kinetic_class  switching_time    saturation_time   minimum_time
+EM10D0144246  1.02066198626769   0.972883868461625  0.0162867863978315   1.89139110389425  2.54416517604565  1e-05  1      1.89139781357557  2.56235923617873  1.92265260038112  switcher       13.429223902119   17.9313214740467  -22.6663317113752
+EM10D1047237  -1.99779861566745  1.00103040140379   0.00245095219378508  1.07985783907675  1.44763878517272  1e-05  1      1.07986151310049  1.44726021325062  1.44726021325062  switcher       13.9426932656304  11.6426016477376  32.3836718502493
 ```
 The derivatives, fitted values, and rescaled fitted values output files will be tab-separated and have a row for each element and a column for each interpolated timepoint:
 ```
