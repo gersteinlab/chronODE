@@ -81,7 +81,7 @@ workflow {
     // run ODE fitting on each chunk
     (fitted_values_ch, derivatives_ch, parameters_ch, restored_values_ch) = fitting(split_ch)
     
-    // merge values, parameters, derivatives, rescaled values across chunks
+    // merge fitted values, parameters, derivatives, and restored values across chunks
     collected_fitted_values = fitted_values_ch.collectFile(name: "${params.out}.fitted.values.tsv", keepHeader: true, skip: 1, storeDir: "${params.dir}")
     collected_derivatives = derivatives_ch.collectFile(name: "${params.out}.derivatives.tsv", keepHeader: true, skip: 1, storeDir: "${params.dir}")
     collected_parameters = parameters_ch.collectFile(name: "${params.out}.parameters.tsv", keepHeader: true, skip: 1, storeDir: "${params.dir}")

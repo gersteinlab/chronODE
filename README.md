@@ -1,8 +1,8 @@
-# The chronode framework for  modelling multi-omic time series with ordinary differential equations and machine learning
+# The chronode framework for modelling multi-omic time series with ordinary differential equations and machine learning
 Beatrice Borsari, Mor Frank, Eve S. Wattenberg, Susanna X. Liu, Xuezhu Yu, Mark Gerstein  
 [bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2023.12.13.571513v1)  
 
-An ODE-based  pipeline for interpolating values and derivatives from time-series data, and machine learning models that predicted gene expression from linked chromatin features.
+An ODE-based framework for modelling logistic and peak-like time-series multi-omic signals, and machine learning models that predicted gene expression over time from linked chromatin features.
 
 ![](https://github.com/gersteinlab/chronODE/blob/main/figure1.png)
 
@@ -39,7 +39,7 @@ The tab-separated main input file needs one row per gene/regulatory element, one
 ```
 cCRE_id	        E10.5	                E11.5	                E12.5	                E13.5	                E14.5	                E15.5	                E16.5	                PN
 EM10D0144246	1.92265260038112	1.89139781357557	1.90998930285207	2.24724966250699	2.44195099910917	2.56235923617873	2.40102884091981	2.5533492607186
-EM10D1047237	1.44726021325062	1.39525207794537	1.41927175130354	1.3478911616366	1.16733471629674	1.09028685205392	1.08475277892454	1.07986151310049
+EM10D1047237	1.44726021325062	1.39525207794537	1.41927175130354	1.3478911616366		1.16733471629674	1.09028685205392	1.08475277892454	1.07986151310049
 ```
 
 The time course must be specified using a .csv file listing all time points in numeric form on one line:
@@ -49,9 +49,9 @@ The time course must be specified using a .csv file listing all time points in n
 
 The parameters output will be tab-separated and have a row for each element and have columns for the k and b parameters fitted to the data, mean squared error (MSE), the range that the data were shifted into for the fitting, and a rescaled value of b based on the original range.
 ```
-cCRE_id		k			b			MSE			range	rescaled_b
-EM10D2246738	0.120000858009469	239089.428129566	0.0557348329407984	0-1	127612.186705749
-EM10D2246742	1.03068354441858	0.886385177421958	0.0237505021001379	0-1	2.88606678854373
+cCRE_id	k	b_starred	MSE	a	b	R_min	R_max	z_min	z_max	z_start	kinetic_class	switching_time	saturation_time	minimum_time
+EM10D0144246	1.02066198626769	0.972883868461625	0.0162867863978315	1.89139110389425	2.54416517604565	1e-05	1	1.89139781357557	2.56235923617873	1.92265260038112	switcher	13.429223902119	17.9313214740467	-22.6663317113752
+EM10D1047237	-1.99779861566745	1.00103040140379	0.00245095219378508	1.07985783907675	1.44763878517272	1e-05	1	1.07986151310049	1.44726021325062	1.44726021325062	switcher	13.9426932656304	11.6426016477376	32.3836718502493
 ```
 The derivatives, fitted values, and rescaled fitted values output files will be tab-separated and have a row for each element and a column for each interpolated timepoint:
 ```
