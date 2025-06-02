@@ -12,20 +12,14 @@ An ODE-based  pipeline for interpolating values and derivatives from time-series
 
 #### Dependencies
 
-These Nextflow pipelines are written in Nextflow DSL2.
+The chronode pipeline for monotonic fitting is written in [Nextflow](https://www.nextflow.io/) DSL2.
+The list of dependencies is provided in the ````chronode.yml``` file. 
+To create the corresponding conda environment, please run: 
 
-R libraries:
 ```
-data.table
-optparse
+conda env create -f chronode.yml
 ```
-Python libraries:
-```
-argparse
-numpy
-pandas
-scipy
-```
+
 #### Input requirements
 
 Usage: `nextflow run chronode.nf [options]`
