@@ -75,7 +75,7 @@ def ODE_fit_sign(input_vals, k_guess, b_guess, start, timepoints):
     # fit using k < 0
     y_ODE_neg, MSE_ODE_neg, fit_param_neg = subfit(input_vals, k_guess, b_guess, start, timepoints, positive=False)
 
-    # fit using k < 0 
+    # fit using k > 0 
     y_ODE_pos, MSE_ODE_pos, fit_param_pos = subfit(input_vals, k_guess, b_guess, start, timepoints, positive=True)
 
     # pick the most successful fit (i.e. the one that is not NA and has the lowest MSE)
@@ -121,7 +121,7 @@ def ODE_fit(df, t_orig):
     # Unpack results into a DataFrame
     parameters = pd.DataFrame({
         'k': [result[0][0] if not np.isnan(result[2]) else np.nan for result in results],
-        'b': [result[0][1] if not np.isnan(result[2]) else np.nan for result in results],
+        'b_starred': [result[0][1] if not np.isnan(result[2]) else np.nan for result in results],
         'MSE': [result[2] for result in results]
      }, index=df.index)
 

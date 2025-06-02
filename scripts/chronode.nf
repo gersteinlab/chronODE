@@ -25,7 +25,7 @@
 if (params.help) {
   log.info 'Usage: nextflow run chronode.nf [options]'
   log.info 'Parameters: '
-  log.info ' --infile   Input matrix (should already be fully transformed)'
+  log.info ' --infile   Input matrix'
   log.info ' --size     Chunk size (affects speed but not final output)'
   log.info ' --out      Prefix for output files'
   log.info ' --dir      Output directory'
