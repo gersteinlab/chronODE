@@ -59,7 +59,7 @@ This file contains the following information:
 * `R_min`, `R_max`, `z_min`, and `z_max`: scaling factors used in the data normalization step (see Methods section of the manuscript "Data normalization").
 * `z_start`: the gene/element's signal at the first experimental time point in the real range of the data. 
 * `MSE`: the Mean Squared Error of the fit in the normalized range of the data. 
-* `kinetic_class`, `switching_time`, `saturation_time`, and `minimum_time`: kinetic characterization of the element (see Methods, section `2.4 Kinetic Classification`, and Supplementary Note 1).
+* `kinetic_class`, `switching_time`, `saturation_time`, and `minimum_time`: kinetic characterization of the element (see Methods, section "Kinetic Classification", and Supplementary Note 1).
 
 The derivatives, fitted values, and restored values output files will also be tab-separated and have a row for each gene/element and a column for each timepoint. Please see below an example of the output file for the `restored.values.tsv` output file:
 ```
