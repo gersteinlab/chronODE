@@ -1,4 +1,4 @@
-# *chronODE*: A framework to integrate time-series multi-omics data based on ordinary differential equations combined with machine learning
+# The chronode framework for  modelling multi-omic time series with ordinary differential equations and machine learning
 Beatrice Borsari, Mor Frank, Eve S. Wattenberg, Susanna X. Liu, Xuezhu Yu, Mark Gerstein  
 [bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2023.12.13.571513v1)  
 
