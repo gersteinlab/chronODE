@@ -1,5 +1,5 @@
 # The chronODE framework for modelling multi-omic time series with ordinary differential equations and machine learning
-Beatrice Borsari, Mor Frank, Eve S. Wattenberg, Susanna X. Liu, Xuezhu Yu, Mark Gerstein  
+Beatrice Borsari, Mor Frank, Eve S. Wattenberg, Ke Xu, Susanna X. Liu, Xuezhu Yu, Mark Gerstein  
 [bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2023.12.13.571513v1)  
 
 An ODE-based framework for modelling logistic and peak-like time-series multi-omic signals, and machine learning models that predicted gene expression over time from linked chromatin features.
